@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax</title>
+</head>
+<body>
+        <input type="text" id="data">
+        <input type="button" value="提交" id="btn">
+    <script type="text/javascript" >
+        var odata = document.getElementById("data"),
+            obtn  = document.getElementById("btn");
+            add(obtn,"click",function(){
+                var req = odata.value,
+                    res = encode({"data":req});
+                request(res,"ajax.php",function(e){
+                    alert(e.data);
+                })
+            });
+            function request(reqdata, url, callback) {
+                var xmlhttp;
+                if (window.XMLHttpRequest) {
+                    xmlhttp = new XMLHttpRequest();
+                }
+                else {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        var data = JSON.parse(xmlhttp.responseText);
+                        callback(data);
+                    }
+                };
+                xmlhttp.open("POST", url,true);  
+                xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xmlhttp.send(reqdata);
+            }
+            function add(target,method,fn){
+                if(target.addEventListener){
+                    target.addEventListener(method,fn,false);
+                }else if(target.attachEvent){
+                    target.attachEvent("on" + method,fn);
+                }else{
+                    target["on" + method] = fn;
+                }
+            }
+            function encode(json){
+                var arr = [];
+                for(var key in json){
+                    arr.push(encodeURIComponent(key) + "=" + encodeURIComponent(json[key]));
+                }
+                return arr.join("&");
+            }
+    </script>
+</body>
+</html>
